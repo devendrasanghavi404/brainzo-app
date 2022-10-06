@@ -1,0 +1,74 @@
+server:
+  port: 8080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
+            exposedHeaders: '*'
+      routes:
+        - id: authentication-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/authentication-service/**
+          filters:
+            - RewritePath=/authentication-service(?<segment>/?.*), $\{segment}
+        - id: user-service
+          uri: http://localhost:9000
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service(?<segment>/?.*), $\{segment}
+        - id: email-service
+          uri: http://localhost:9092
+          predicates:
+            - Path=/email-service/**
+          filters:
+            - RewritePath=/email-service(?<segment>/?.*), $\{segment}
+        - id: course-service
+          uri: http://localhost:8087
+          predicates:
+            - Path=/course-service/**
+          filters:
+            - RewritePath=/course-service(?<segment>/?.*), $\{segment}
+        - id: payment-service
+          uri: http://localhost:8099
+          predicates:
+            - Path=/payment-service/**
+          filters:
+            - RewritePath=/payment-service(?<segment>/?.*), $\{segment}
+        - id: content-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/content-service/**
+          filters:
+           - RewritePath=/content-service(?<segment>/?.*), $\{segment}
+        - id: product-webapp
+          uri: http://localhost:4200
+          predicates:
+            - Path=/**
+          filters:
+            - RewritePath=(?<segment>/?.*), $\{segment}
+        - id: qna-service
+          uri: http://localhost:9001
+          predicates:
+            - Path=/qna-service/**
+          filters:
+           - RewritePath=/qna-service(?<segment>/?.*), $\{segment}
+        
